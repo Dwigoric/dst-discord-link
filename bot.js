@@ -120,6 +120,8 @@ function SendToDiscord() {
                 return
             }
 
+            if (!data.name || !data.message) return
+
             client.channels.cache
                 .get(channelHook)
                 .send(String(data.name) + ': ' + String(data.message))
