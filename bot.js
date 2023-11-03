@@ -11,86 +11,74 @@ const client = new Discord.Client()
 
 import 'dotenv/config'
 import fs from 'fs'
-import moment from 'moment'
 
-let lastModified = 0
 let channelHook = 0
+
+// Open previously linked channel.
+try {
+    if (fs.existsSync('./linked_channel.json')) {
+        const data = JSON.parse(fs.readFileSync('./linked_channel.json', 'utf8'))
+        channelHook = data.channelId
+    }
+} catch (err) {
+    console.error(err)
+}
+
+// ------ JSON FILES ------
+try {
+    // Try to create the file if it doesn't exist
+    if (!fs.existsSync(`${path}/out.json`)) {
+        const str = { message: '', time: Date.now() }
+        fs.writeFileSync(`${path}/out.json`, JSON.stringify(str))
+    }
+} catch (err) {
+    console.error(err)
+}
+try {
+    // Try to create the file if it doesn't exist
+    if (!fs.existsSync(`${path}/in.json`)) {
+        fs.writeFileSync(`${path}/in.json`, '')
+    }
+} catch (err) {
+    console.error(err)
+}
+
+// Watch out.json file
+fs.watchFile(`${path}/out.json`, SendToDiscord)
+
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`)
-    try {
-        // Try to create the file if it doesn't exist
-        if (!fs.existsSync(`${path}/out.json`)) {
-            const str = { message: '', time: Date.now() }
-            fs.writeFileSync(`${path}/out.json`, JSON.stringify(str))
-        }
-    } catch (err) {
-        console.error(err)
-    }
-    try {
-        // Try to create the file if it doesn't exist
-        if (!fs.existsSync(`${path}/in.json`)) {
-            fs.writeFileSync(`${path}/in.json`, '')
-        }
-    } catch (err) {
-        console.error(err)
-    }
-    let fd = null
-    try {
-        fd = fs.openSync(`${path}/out.json`, 'r')
-    } catch (err) {
-        console.error(err)
-    }
-    try {
-        const data = fs.statSync(`${path}/out.json`)
-        lastModified = data.mtime.toISOString()
-        console.log('last modified changed to ' + lastModified)
-    } catch (err) {
-        console.error(err)
-    }
-    try {
-        fs.closeSync(fd)
-    } catch (err) {
-        console.error(err)
-    }
 })
 
 client.on('message', (message) => {
-    if (message.content == 'dst!link' && channelHook == 0) {
-        channelHook = message.channel
-        message.delete()
-        setInterval(function () {
-            fs.open(`${path}/out.json`, 'r', (err, fd) => {
-                if (err) {
-                    console.log(err)
-                    return
-                } else {
-                    fs.stat(`${path}/out.json`, (err, data) => {
-                        const previousLMM = moment(lastModified)
-                        const rightNow = data.mtime.toISOString()
-                        const folderLMM = moment(rightNow)
-                        const res = !folderLMM.isSame(previousLMM, 'second') //seconds granularity
-                        if (res) {
-                            try {
-                                const data = JSON.parse(fs.readFileSync(`${path}/out.json`, 'utf8'))
-                                message.channel.send(String(data.name) + ':' + String(data.message))
-                            } catch (err) {
-                                console.error(err)
-                            }
-                            lastModified = rightNow
-                        }
-                        try {
-                            fs.closeSync(fd)
-                        } catch (err) {
-                            console.log(err)
-                        }
-                    })
-                }
-            })
-        }, 500)
-    }
+    if (message.content === 'dst!link') {
+        channelHook = message.channel.id
 
-    if (message.content.startsWith('!send ') && message.channel == channelHook) {
-        SendToDontStarve(message.author.username, message.content.substring(6))
+        // Write to linked_channel.json
+        fs.open('./linked_channel.json', 'w', (err, fd) => {
+            if (err) {
+                console.error(err)
+                return
+            }
+
+            try {
+                const str = { channelId: channelHook }
+                fs.writeFileSync('./linked_channel.json', JSON.stringify(str))
+            } catch (err) {
+                console.error(err)
+            }
+
+            // Close the opened file.
+            try {
+                fs.closeSync(fd)
+            } catch (err) {
+                console.error(err)
+            }
+        })
+
+        message.delete().catch(() => message.react('✅').catch(() => null))
+    } else if (message.channel.id === channelHook && message.author.id !== client.user.id) {
+        SendToDontStarve(message.author.username, message.content)
     }
     /*
 	examples of custom commands, there is a commented part of the dont starve side where it allows anybody who does a / command to execute custom lua on the serverside. PLEASE SET THIS UP CAREFULLY, GIVING THIS ABILITY TO ANYONE CAN DAMAGE PEOPLE'S GAMES IF USED NEFARIOUSLY.
@@ -123,6 +111,34 @@ client.on('message', (message) => {
 		message.channel.send("!ban                TheNet:Ban(userid) \n!kick               TheNet:Kick(userid)\n!regenerate   c_regenerateworld()\n!rollback        c_rollback(count)\n!listplayers    c_listallplayers\n!announce     c_announce(\"announcement\")\n!save               c_save()\n!reset              c_reset()")
 	}*/
 })
+
+function SendToDiscord() {
+    if (channelHook === 0 || client.readyAt === null) return
+
+    fs.open(`${path}/out.json`, 'r', (err, fd) => {
+        if (err) {
+            console.error(err)
+            return
+        }
+
+        fs.stat(`${path}/out.json`, (err, data) => {
+            if (err) {
+                console.error(err)
+                return
+            }
+
+            client.channels.cache
+                .get(channelHook)
+                .send(String(data.name) + ': ' + String(data.message))
+
+            try {
+                fs.closeSync(fd)
+            } catch (err) {
+                console.log(err)
+            }
+        })
+    })
+}
 
 function SendToDontStarve(name, message) {
     fs.open(`${path}/in.json`, 'w', (err, fd) => {
