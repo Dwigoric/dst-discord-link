@@ -33,23 +33,11 @@ Most likely, the game files are not exposed outside the Docker container. You mu
 2. Paste the bot token into the `BOT_TOKEN` variable. Do not include quotes.
 3. Change the `JSON_PATH` variable so that it points to where the created JSON files are located.
 
-### `bot.js`
-
-For Docker-based servers, you will need to change the path variables to point to the directory where the JSON files are located.
-
-On first startup, you should start this Discord bot first, then DST to prevent a crash.
-
-## Commands
+## Linking Discord and DST
 
 ### `dst!link`
 
-By running this command, all messages in DST will be forwarded to the channel you run this command in. For instance, if you run this command in the bot's DMs, all DST events will be sent to your DMs with the bot.
-
-This channel does not persists between shutdowns. You must run this command every time the bot starts up.
-
-### `!send <message>`
-
-This command sends messages from Discord to DST. The command is recognized anywhere the bot can read messages from.
+By running this command, all messages in DST will be forwarded to the channel you run this command in. For instance, if you run this command in the bot's DMs, all DST events will be sent to your DMs with the bot. You only need to run this once.
 
 ## Some Other Stuff
 
