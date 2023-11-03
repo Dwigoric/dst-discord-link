@@ -31,10 +31,9 @@ Most likely, the game files are not exposed outside the Docker container. You mu
 
 1. Duplicate the `example.env` file and rename it to `.env` (nothing before the dot).
 2. Paste the bot token into the `BOT_TOKEN` variable. Do not include quotes.
+3. Change the `JSON_PATH` variable so that it points to where the created JSON files are located.
 
 ### `bot.js`
-
-If you have installed Don't Starve Together somewhere else, you will also need to change the path variables up at the top to point to where the game is located.
 
 For Docker-based servers, you will need to change the path variables to point to the directory where the JSON files are located.
 

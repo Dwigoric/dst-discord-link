@@ -1,11 +1,3 @@
-/**
- * CONFIGURE THIS TO WHERE THE JSON FILES ARE LOCATED
- */
-const path = "C:/Program Files (x86)/Steam/steamapps/common/Don't Starve Together/data"
-/**
- * CONFIGURE THIS TO WHERE THE JSON FILES ARE LOCATED
- */
-
 import Discord from 'discord.js'
 const client = new Discord.Client()
 
@@ -14,6 +6,7 @@ import fs from 'fs'
 
 let channelHook = 0
 
+const path = process.env.JSON_PATH
 // Open previously linked channel.
 try {
     if (fs.existsSync('./linked_channel.json')) {
@@ -106,7 +99,7 @@ client.on('message', (message) => {
 	if(message.content.startsWith("!reset") && message.channel == channelHook){
 		SendToDontStarve(message.author.username,"/c_reset()")
 	}
-	
+
 	if(message.content.startsWith("!help") && message.channel == channelHook){
 		message.channel.send("!ban                TheNet:Ban(userid) \n!kick               TheNet:Kick(userid)\n!regenerate   c_regenerateworld()\n!rollback        c_rollback(count)\n!listplayers    c_listallplayers\n!announce     c_announce(\"announcement\")\n!save               c_save()\n!reset              c_reset()")
 	}*/
