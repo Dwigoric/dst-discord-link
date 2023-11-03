@@ -114,24 +114,14 @@ function SendToDiscord() {
             return
         }
 
-        fs.stat(`${path}/out.json`, (err) => {
-            if (err) {
-                console.error(err)
-                return
-            }
+        const data = JSON.parse(fs.readFileSync(`${path}/out.json`, 'utf8'))
+        client.channels.cache.get(channelHook).send(String(data.name) + ': ' + String(data.message))
 
-            const data = JSON.parse(fs.readFileSync(`${path}/out.json`, 'utf8'))
-
-            client.channels.cache
-                .get(channelHook)
-                .send(String(data.name) + ': ' + String(data.message))
-
-            try {
-                fs.closeSync(fd)
-            } catch (err) {
-                console.log(err)
-            }
-        })
+        try {
+            fs.closeSync(fd)
+        } catch (err) {
+            console.error(err)
+        }
     })
 }
 
