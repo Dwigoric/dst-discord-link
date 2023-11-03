@@ -1,45 +1,61 @@
-dont_starve_bot
+# Don't Starve Bot (Discord Link)
 
-Setup:
-get NPM (https://www.npmjs.com/)
+## Before Anything...
 
-get Node.js (https://nodejs.org/en/)
+You must create two files in the directory where the game is located. You can find this by going to your Steam library and right-clicking DST, then browse local files. In the `data` directory, create two files named `in.json` and `out.json`.
 
-make a folder anywhere, go inside, open the command prompt and use the commands:
+### Dedicated Servers
 
-`npm install node.js`
+Find where the game files are located. The created JSON files must be within the `data` directory.
 
-`npm install discord.js@12.5.3`
+### For Docker-based servers
 
-`npm install moment`
+Most likely, the game files are not exposed outside the Docker container. You must manually mount the JSON files so that the JSON files outside (located anywhere you want) point to the `data` directory's `in.json` and `out.json`.
 
-copy bot.js into the root directory of the folder so it looks a bit like this
+## Setup
 
-![bot directory](https://i.imgur.com/MOYhru6.png)
+1. Get [Node.js](https://nodejs.org/en/)
+2. Download this repository or clone it.
+3. In the same folder where this repository is located, run the command:
 
-now for the bot, go to https://discord.com/developers/applications, make a new application, and make a new bot
+`npm install --production`
 
-get the bot token, not the client secret, and paste it into the last line of the bot script where it says `'bot login here'`
+## Bot Application
 
-if you have installed dont starve together somewhere else, you will also need to change the path variables up at the top to point to where dont starve is located
+1. Go to the [Discord Developers Dashboard](https://discord.com/developers/applications) and make a new application.
+2. In the application you just made, create a bot user.
+3. Enable **Message Content Intent**.
+4. Copy the bot token (not the client secret!).
 
-on first startup, you should start the discord bot first and then don't starve to prevent a crash
+### `.env`
 
-2 commands: `dst!link` will tell the discord bot to copy all messages sent in dont starve to the current channel, this can be a dm directly to it. `!send<message>` to send messages to dont starve.
+1. Duplicate the `example.env` file and rename it to `.env` (nothing before the dot).
+2. Paste the bot token into the `BOT_TOKEN` variable. Do not include quotes.
 
-the bot will not remember what channel to send to after a shutdown
+### `bot.js`
 
-!send will work no matter the channel as long as the bot has permissions to read
+If you have installed Don't Starve Together somewhere else, you will also need to change the path variables up at the top to point to where the game is located.
 
-if you are having trouble, feel free to ask me on discord @ Anumania#0261
+For Docker-based servers, you will need to change the path variables to point to the directory where the JSON files are located.
 
+On first startup, you should start this Discord bot first, then DST to prevent a crash.
 
-NEW STUFF:
-now, both sides use json for communicating which means you can modify a lot easier.
-the mod side of stuff now works reliably on dedicated servers, even if caves are enabled or more than one shard is being used.
-there is commented code for allowing admins to execute lua on the serverside which is super dangerous and you should not uncomment it unless you know what youre doing.
-there are custom commands commented out on the bot side using said dangerous execute lua functionality. 
+## Commands
 
-if you want help setting up the bot to only allow certain people to execute commands, let me know, but if you know discord.js its not all that hard.
+### `dst!link`
 
-i think discord might be about to drop support for this version of the api so let me know if it randomly stops being able to connect to discord pls
+By running this command, all messages in DST will be forwarded to the channel you run this command in. For instance, if you run this command in the bot's DMs, all DST events will be sent to your DMs with the bot.
+
+This channel does not persists between shutdowns. You must run this command every time the bot starts up.
+
+### `!send <message>`
+
+This command sends messages from Discord to DST. The command is recognized anywhere the bot can read messages from.
+
+## Some Other Stuff
+
+There are commented codes for allowing admins to execute Lua script on the server. You most likely do not have to uncomment this unless you absolutely understand what you are doing.
+
+## Copyright Notice
+
+This project is a fork of [Anumania](https://github.com/Anumania)'s [Discord Bot](https://github.com/Anumania/dont_starve_bot).
