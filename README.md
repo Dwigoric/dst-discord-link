@@ -2,7 +2,7 @@
 
 ## Before Anything...
 
-You must create two files in the directory where the game is located. You can find this by going to your Steam library and right-clicking DST, then browse local files. In the `data` directory, create two files named `in.json` and `out.json`.
+You must create two files in the directory where the game is located. You can find this by going to your Steam library and right-clicking DST, then browse local files. In the `data` directory, create two empty files named `in.json` and `out.json`. The bot already tries to create these files automatically, but it is recommended to create them manually.
 
 ### Dedicated Servers
 
