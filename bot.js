@@ -114,11 +114,13 @@ function SendToDiscord() {
             return
         }
 
-        fs.stat(`${path}/out.json`, (err, data) => {
+        fs.stat(`${path}/out.json`, (err) => {
             if (err) {
                 console.error(err)
                 return
             }
+
+            const data = JSON.parse(fs.readFileSync(`${path}/out.json`, 'utf8'))
 
             client.channels.cache
                 .get(channelHook)
