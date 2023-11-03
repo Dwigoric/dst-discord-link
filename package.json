@@ -1,0 +1,22 @@
+{
+    "name": "dst-discord-link",
+    "packageManager": "yarn@4.0.1",
+    "scripts": {
+        "lint": "eslint . --ext .js",
+        "prettier": "prettier --write .",
+        "prettier:check": "prettier --check .",
+        "prettier:write": "prettier --write .",
+        "start": "node index.js"
+    },
+    "dependencies": {
+        "discord.js": "12.x",
+        "moment": "^2.29.4"
+    },
+    "devDependencies": {
+        "@rushstack/eslint-patch": "^1.5.1",
+        "eslint": "^8.52.0",
+        "eslint-plugin-import": "^2.29.0",
+        "eslint-plugin-prettier": "^5.0.1",
+        "prettier": "^3.0.3"
+    }
+}
